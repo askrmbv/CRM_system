@@ -1,0 +1,2 @@
+module CRM.system {
+}
