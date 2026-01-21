@@ -6,7 +6,7 @@ public class DBManager {
     public Connection getConnection() {
         String url = "jdbc:postgresql://localhost:5432/crm_db";
         String user = "postgres";
-        String pass = "1234";
+        String pass = "0000";
         try {
             Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(url, user, pass);
