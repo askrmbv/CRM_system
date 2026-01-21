@@ -7,7 +7,6 @@ import java.sql.*;
 public class ClientRepository {
     private DBManager db = new DBManager();
 
-    // Мгновенная проверка уникальности
     public boolean isTaken(String field, String value) {
         String sql = "SELECT COUNT(*) FROM clients WHERE " + field + " = ?";
         try (Connection conn = db.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
@@ -29,7 +28,6 @@ public class ClientRepository {
         } catch (SQLException e) { return false; }
     }
 
-    // Фильтрация по стадиям
     public void findByStage(String stage) {
         String sql = (stage.equals("ALL")) ? "SELECT * FROM clients" : "SELECT * FROM clients WHERE stage = ?";
         try (Connection conn = db.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {

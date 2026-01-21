@@ -8,60 +8,48 @@ public class MyApplication {
 
     public void start() {
         while (true) {
-            System.out.println("\n===== CRM SYSTEM PRO =====");
-            System.out.println("1. Create Client | 2. Filter by Stage | 3. Show All | 4. Delete | 0. Exit");
+            System.out.println("\n--- CRM SYSTEM ---");
+            System.out.println("1.Add | 2.Filter | 3.List | 4.Delete | 0.Exit");
             String choice = scanner.next();
             if (choice.equals("0")) break;
 
             switch (choice) {
-                case "1" -> addClientProcess();
-                case "2" -> {
-                    System.out.println("Stage: 1.Lid 2.Negotiation 3.Decision 4.Deal");
-                    repo.findByStage(getStageByChoice(scanner.nextInt()));
-                }
+                case "1" -> addFlow();
+                case "2" -> filterFlow();
                 case "3" -> repo.findByStage("ALL");
                 case "4" -> {
-                    System.out.print("ID: ");
-                    System.out.println(repo.delete(scanner.nextInt()) ? "Deleted." : "Not found.");
+                    System.out.print("Enter ID: ");
+                    System.out.println(repo.delete(scanner.nextInt()) ? "OK" : "Error");
                 }
             }
         }
     }
 
-    private void addClientProcess() {
-        // Проверка имени СРАЗУ
-        System.out.print("Name: ");
-        String name = scanner.next();
-        if (repo.isTaken("name", name)) {
-            System.out.println("!!! ERROR: Name '" + name + "' already exists! Aborting.");
-            return;
+    private void addFlow() {
+        System.out.print("Name: "); String n = scanner.next();
+        if (repo.isTaken("name", n)) { System.out.println("Name taken!"); return; }
+
+        System.out.print("Email: "); String e = scanner.next();
+        if (repo.isTaken("email", e)) { System.out.println("Email taken!"); return; }
+
+        System.out.println("Stage: 1.Lid 2.Negotiation 3.Decision 4.Deal");
+        String s = getStage(scanner.nextInt());
+
+        double p = 0;
+        if (s.equals("deal")) {
+            System.out.print("Amount: "); p = scanner.nextDouble();
         }
 
-        // Проверка Email СРАЗУ
-        System.out.print("Email: ");
-        String email = scanner.next();
-        if (repo.isTaken("email", email)) {
-            System.out.println("!!! ERROR: Email '" + email + "' is taken! Aborting.");
-            return;
-        }
-
-        System.out.println("Select Stage: 1.Lid 2.Negotiation 3.Decision 4.Deal");
-        String stage = getStageByChoice(scanner.nextInt());
-
-        double price = 0;
-        if (stage.equals("deal")) {
-            System.out.print("Deal amount ($): ");
-            price = scanner.nextDouble();
-        }
-
-        Client c = new Client(0, name, email, stage, price);
-        if (repo.save(c)) {
-            System.out.println("Saved! Assigned Rank: " + c.getPrivilege());
-        }
+        if (repo.save(new Client(0, n, e, s, p))) System.out.println("Saved");
     }
 
-    private String getStageByChoice(int c) {
-        return switch(c) {
+    private void filterFlow() {
+        System.out.println("Select: 1.Lid 2.Negotiation 3.Decision 4.Deal");
+        repo.findByStage(getStage(scanner.nextInt()));
+    }
+
+    private String getStage(int i) {
+        return switch(i) {
             case 2 -> "negotiation";
             case 3 -> "decision";
             case 4 -> "deal";
