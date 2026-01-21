@@ -12,3 +12,10 @@ public String register(String name, String email, int status, double price) {
     Client c = new Client(0, name, email, status, price);
     return repo.save(c) ? "Client registered successfully!" : "Registration failed!";
 }
+public void printClients() {
+    repo.findAll();
+}
+
+public String removeClient(int id) {
+    return repo.delete(id) ? "Client deleted!" : "Client not found!";
+}
