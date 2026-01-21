@@ -19,3 +19,9 @@ public void printClients() {
 public String removeClient(int id) {
     return repo.delete(id) ? "Client deleted!" : "Client not found!";
 }
+public void updateStep(int id, int newStatus) {
+    if (id > 0) {
+        repo.updateStatus(id, newStatus);
+        System.out.println("Status updated for ID: " + id);
+    }
+}
