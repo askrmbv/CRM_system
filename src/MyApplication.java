@@ -1,4 +1,3 @@
-package src;
 import logic.ClientController;
 import java.util.Scanner;
 

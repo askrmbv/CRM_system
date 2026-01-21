@@ -1,4 +1,5 @@
 package logic;
+
 import data.DBManager;
 import models.Client;
 import java.sql.*;
@@ -27,33 +28,27 @@ public class ClientRepository {
             return rs.next() && rs.getInt(1) > 0;
         } catch (SQLException e) { return false; }
     }
-}
-public void findAll() {
-    String sql = "SELECT * FROM clients";
-    try (Connection conn = db.getConnection();
-         Statement st = conn.createStatement();
-         ResultSet rs = st.executeQuery(sql)) {
-        while (rs.next()) {
-            System.out.println(rs.getInt("id") + " | " + rs.getString("name") + " | " + rs.getString("email"));
-        }
-    } catch (SQLException e) { e.printStackTrace(); }
-}
 
-public boolean delete(int id) {
-    String sql = "DELETE FROM clients WHERE id = ?";
-    try (Connection conn = db.getConnection();
-         PreparedStatement st = conn.prepareStatement(sql)) {
-        st.setInt(1, id);
-        return st.executeUpdate() > 0;
-    } catch (SQLException e) { return false; }
-}
+    public void findAll() {
+        String sql = "SELECT * FROM clients";
+        try (Connection conn = db.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                System.out.println(new Client(
+                        rs.getInt("id"), rs.getString("name"),
+                        rs.getString("email"), rs.getInt("status"), rs.getDouble("price")
+                ));
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
 
-public void updateStatus(int id, int status) {
-    String sql = "UPDATE clients SET status = ? WHERE id = ?";
-    try (Connection conn = db.getConnection();
-         PreparedStatement st = conn.prepareStatement(sql)) {
-        st.setInt(1, status);
-        st.setInt(2, id);
-        st.executeUpdate();
-    } catch (SQLException e) { e.printStackTrace(); }
+    public boolean delete(int id) {
+        String sql = "DELETE FROM clients WHERE id = ?";
+        try (Connection conn = db.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, id);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) { return false; }
+    }
 }

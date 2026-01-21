@@ -11,7 +11,7 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(url, user, pass);
         } catch (Exception e) {
-            System.out.println("DB Connection Error: " + e.getMessage());
+            System.out.println("DB Error: " + e.getMessage());
             return null;
         }
     }
