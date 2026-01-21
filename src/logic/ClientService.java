@@ -11,3 +11,4 @@ public class ClientService {
         return email != null && email.contains("@") && email.contains(".");
     }
 }
+// damir

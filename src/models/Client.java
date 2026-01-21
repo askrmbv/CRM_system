@@ -37,3 +37,5 @@ public class Client {
                 id, name, email, stage.toUpperCase(), price, privilege);
     }
 }
+
+// damir

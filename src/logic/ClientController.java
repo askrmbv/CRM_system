@@ -14,3 +14,5 @@ public class ClientController {
     public void showByStage(String s) { repo.findByStage(s); }
     public String remove(int id) { return repo.delete(id) ? "Deleted" : "Not found"; }
 }
+
+// ayim
