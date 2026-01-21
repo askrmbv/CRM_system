@@ -10,3 +10,6 @@ public String getRank(double price) {
     if (price >= 500) return "Silver";
     return "Standard";
 }
+public double applyDiscount(double price) {
+    return (price > 2000) ? price * 0.95 : price;
+}
