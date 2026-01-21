@@ -9,3 +9,6 @@ public String toString() {
 public String toString() {
     return "Client{name='" + name + "', price=" + price + "}";
 }
+public boolean isHighValue() {
+    return this.price > 1000;
+}
