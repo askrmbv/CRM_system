@@ -8,8 +8,8 @@ public class MyApplication {
 
     public void start() {
         while (true) {
-            System.out.println("\n--- CRM SYSTEM ---");
-            System.out.println("1.Add Client | 2.Filter Client | 3.All Clients | 4.Delete Client | 0.Exit");
+            System.out.println("\n--- WELCOME TO YOUR CRM ---");
+            System.out.println("1. Add Client | 2. Filter Client | 3. All Clients | 4. Delete Client | 0. Exit");
             String choice = scanner.next();
             if (choice.equals("0")) break;
 
