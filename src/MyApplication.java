@@ -1,5 +1,7 @@
 import logic.ClientRepository;
 import models.Client;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class MyApplication {
@@ -16,7 +18,12 @@ public class MyApplication {
             switch (choice) {
                 case "1" -> addFlow();
                 case "2" -> filterFlow();
-                case "3" -> repo.findByStage("ALL");
+                case "3" -> {
+                    List<Client> clients = repo.findByStage("ALL");
+                    for (Client client : clients) {
+                        System.out.println(client);
+                    }
+                }
                 case "4" -> {
                     System.out.print("Enter ID: ");
                     System.out.println(repo.delete(scanner.nextInt()) ? "OK" : "Error");
@@ -45,7 +52,11 @@ public class MyApplication {
 
     private void filterFlow() {
         System.out.println("Select: 1.Lid 2.Negotiation 3.Decision 4.Deal");
-        repo.findByStage(getStage(scanner.nextInt()));
+        List<Client> clients = repo.findByStage(getStage(scanner.nextInt()));
+
+        for (Client client : clients) {
+            System.out.println(client);
+        }
     }
 
     private String getStage(int i) {

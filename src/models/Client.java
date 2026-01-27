@@ -29,7 +29,6 @@ public class Client {
     public String getStage() { return stage; }
     public double getPrice() { return price; }
     public String getPrivilege() { return privilege; }
-    public int getId() { return id; }
 
     @Override
     public String toString() {

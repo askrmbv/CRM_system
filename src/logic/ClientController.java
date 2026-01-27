@@ -1,6 +1,8 @@
 package logic;
 import models.Client;
 
+import java.util.List;
+
 public class ClientController {
     private ClientRepository repo = new ClientRepository();
 
@@ -10,8 +12,8 @@ public class ClientController {
         return repo.save(new Client(0, n, e, s, p)) ? "Success" : "Fail";
     }
 
-    public void showAll() { repo.findByStage("ALL"); }
-    public void showByStage(String s) { repo.findByStage(s); }
+    public List<Client> showAll() { return repo.findByStage("ALL"); }
+    public List<Client> showByStage(String s) { return repo.findByStage(s); }
     public String remove(int id) { return repo.delete(id) ? "Deleted" : "Not found"; }
 }
 
