@@ -1,5 +1,7 @@
 package ui;
 
+import logic.IClientRepository;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -12,7 +14,7 @@ public class MyApplication {
     // Login
     private final Map<String, String[]> users = new HashMap<>();
 
-    public MyApplication() {
+    public MyApplication(IClientRepository repo) {
         // List check
         users.put("asanali", new String[]{"admin123", "Admin"});
         users.put("ayim", new String[]{"manager123", "Manager"});
