@@ -4,8 +4,10 @@ import models.Client;
 import java.util.List;
 
 public interface IClientRepository {
-    boolean isTaken(String field, String value);
-    boolean save(Client c);
-    List<Client> findByStage(String stage);
-    boolean delete(int id);
+    // Добавь эти методы:
+    List<Client> getAllClients();
+    boolean addClient(Client client);
+
+    // Если у вас будут еще методы (удаление, поиск), они тоже пишутся тут
+    boolean deleteClient(int id);
 }
