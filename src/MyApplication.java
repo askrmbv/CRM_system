@@ -1,71 +1,90 @@
-import logic.ClientRepository;
-import models.Client;
+package ui;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class MyApplication {
-    private ClientRepository repo = new ClientRepository();
-    private Scanner scanner = new Scanner(System.in);
+    private String currentUser;
+    private String userRole;
+    private final Scanner scanner = new Scanner(System.in);
+
+    // Login
+    private final Map<String, String[]> users = new HashMap<>();
+
+    public MyApplication() {
+        // List check
+        users.put("asanali", new String[]{"admin123", "Admin"});
+        users.put("ayim", new String[]{"manager123", "Manager"});
+        users.put("damir", new String[]{"editor123", "Editor"});
+    }
 
     public void start() {
-        while (true) {
-            System.out.println("\n--- WELCOME TO YOUR CRM ---");
-            System.out.println("1. Add Client | 2. Filter Client | 3. All Clients | 4. Delete Client | 0. Exit");
-            String choice = scanner.next();
-            if (choice.equals("0")) break;
+        if (authenticate()) {
+            showMenu();
+        }
+    }
 
-            switch (choice) {
-                case "1" -> addFlow();
-                case "2" -> filterFlow();
-                case "3" -> {
-                    List<Client> clients = repo.findByStage("ALL");
-                    for (Client client : clients) {
-                        System.out.println(client);
-                    }
-                }
-                case "4" -> {
-                    System.out.print("Enter ID: ");
-                    System.out.println(repo.delete(scanner.nextInt()) ? "OK" : "Error");
+    private boolean authenticate() {
+        System.out.println("------------- ENTER LOGIN AND PASSWORD ------------");
+
+        System.out.print("Login: ");
+        String login = scanner.nextLine().toLowerCase();
+
+        if (!users.containsKey(login)) {
+            System.out.println(" [!] Error: User not found!");
+            return false;
+        }
+
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        String[] userData = users.get(login);
+        if (!userData[0].equals(password)) {
+            System.out.println(" [!] Error: Incorrect password!");
+            return false;
+        }
+
+        this.currentUser = login;
+        this.userRole = userData[1];
+        System.out.println("\nSuccessfully logged in! Welcome, " + currentUser + " (" + userRole + ")");
+        return true;
+    }
+
+    private void showMenu() {
+        while (true) {
+            System.out.println("\n---------- CRM WORKPLACE ----------");
+            System.out.println("User: " + currentUser + " | Role: " + userRole);
+            System.out.println("1. Deals (Clients)");
+            System.out.println("2. Tasks (Orders)");
+            System.out.println("3. Contacts");
+            System.out.println("4. Delete Operations (Danger Zone)");
+            System.out.println("5. Settings");
+            System.out.println("0. Exit");
+            System.out.print("Select option: ");
+
+            int choice = scanner.nextInt();
+            if (choice == 0) break;
+
+            handleChoice(choice);
+        }
+    }
+
+    private void handleChoice(int choice) {
+        switch (choice) {
+            case 1 -> System.out.println("-> Accessing Deals section...");
+            case 2 -> System.out.println("-> Accessing Tasks (JOIN table)...");
+            case 3 -> System.out.println("-> Accessing Contacts...");
+            case 4 -> {
+                // Role Management
+                if (!userRole.equals("Admin")) {
+                    System.out.println(" [!] ACCESS DENIED: Only Admin can delete data.");
+                } else {
+                    System.out.println("-> Admin access granted. Proceeding to delete menu...");
                 }
             }
+            case 5 -> System.out.println("-> Opening Settings...");
+            default -> System.out.println(" [!] Invalid choice.");
         }
-    }
-
-    private void addFlow() {
-        System.out.print("Name: "); String n = scanner.next();
-        if (repo.isTaken("name", n)) { System.out.println("Name taken!"); return; }
-
-        System.out.print("Email: "); String e = scanner.next();
-        if (repo.isTaken("email", e)) { System.out.println("Email taken!"); return; }
-
-        System.out.println("Stage: 1.Lid 2.Negotiation 3.Decision 4.Deal");
-        String s = getStage(scanner.nextInt());
-
-        double p = 0;
-        if (s.equals("deal")) {
-            System.out.print("Amount: "); p = scanner.nextDouble();
-        }
-
-        if (repo.save(new Client(0, n, e, s, p))) System.out.println("Saved");
-    }
-
-    private void filterFlow() {
-        System.out.println("Select: 1.Lid 2.Negotiation 3.Decision 4.Deal");
-        List<Client> clients = repo.findByStage(getStage(scanner.nextInt()));
-
-        for (Client client : clients) {
-            System.out.println(client);
-        }
-    }
-
-    private String getStage(int i) {
-        return switch(i) {
-            case 2 -> "negotiation";
-            case 3 -> "decision";
-            case 4 -> "deal";
-            default -> "lid";
-        };
     }
 }
-// asanali
