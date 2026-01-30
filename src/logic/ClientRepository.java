@@ -50,7 +50,7 @@ public class ClientRepository implements IClientRepository {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 clients.add(new Client(
-                        rs.getInt("id"),
+//                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("stage"),

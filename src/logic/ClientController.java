@@ -9,7 +9,7 @@ public class ClientController {
     public String add(String n, String e, String s, double p) {
         if (repo.isTaken("name", n)) return "Error: Name exists!";
         if (repo.isTaken("email", e)) return "Error: Email exists!";
-        return repo.save(new Client(0, n, e, s, p)) ? "Success" : "Fail";
+        return repo.save(new Client( n, e, s, p)) ? "Success" : "Fail";
     }
 
     public List<Client> showAll() { return repo.findByStage("ALL"); }

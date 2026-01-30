@@ -67,7 +67,6 @@ public class MyApplication {
 
             int choice = scanner.nextInt();
             if (choice == 0) break;
-
             handleChoice(choice);
         }
     }

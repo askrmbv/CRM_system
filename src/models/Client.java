@@ -8,8 +8,7 @@ public class Client {
     private double price;
     private String privilege;
 
-    public Client(int id, String name, String email, String stage, double price) {
-        this.id = id;
+    public Client( String name, String email, String stage, double price) {
         this.name = name;
         this.email = email;
         this.stage = stage;
@@ -35,6 +34,7 @@ public class Client {
         return String.format("ID: %d | Name: %-10s | Email: %-15s | Stage: %-11s | Price: %-7.2f | Privilege: [%s]",
                 id, name, email, stage.toUpperCase(), price, privilege);
     }
+
 }
 
 // damir
