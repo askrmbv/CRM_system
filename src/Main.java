@@ -1,4 +1,3 @@
-import ui.MyApplication;
 import logic.ClientRepository;
 import logic.IClientRepository;
 

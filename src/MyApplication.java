@@ -1,5 +1,3 @@
-package ui;
-
 import logic.IClientRepository;
 
 import java.util.HashMap;
