@@ -32,13 +32,13 @@ public class MyApplication {
 
     public void start() {
         System.out.println("╔════════════════════════════════════════════╗");
-        System.out.println("║          CRM MANAGEMENT SYSTEM            ║");
+        System.out.println("║           CRM MANAGEMENT SYSTEM            ║");
         System.out.println("╚════════════════════════════════════════════╝");
 
         if (authenticate()) {
             mainMenu();
         } else {
-            System.out.println("Login failed. Goodbye!");
+            System.out.println("Login failed");
         }
     }
 
@@ -144,12 +144,17 @@ public class MyApplication {
                 switch (choice) {
                     case 1 -> {
                         System.out.println("\n--- ALL CLIENTS ---");
-                        clientCtrl.getAll().forEach(System.out::println);  // Lambda
+                        var clients = clientCtrl.getAll();
+                        if (clients.isEmpty()) {
+                            System.out.println("📭 No clients yet. Add your first client!");
+                        } else {
+                            clients.forEach(System.out::println);
+                        }
                     }
                     case 2 -> addClientUI();
                     case 3 -> updateClientUI();
                     case 4 -> deleteClientUI();
-                    case 5 -> viewClientDetailsUI();  // JOIN operation
+                    case 5 -> viewClientDetailsUI();
                     case 6 -> filterByStageUI();
                     case 0 -> { return; }
                 }
@@ -163,6 +168,15 @@ public class MyApplication {
 
     private void addClientUI() {
         System.out.println("\n--- ADD CLIENT ---");
+
+        // Check if tasks exist first
+        if (taskCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No tasks found!");
+            System.out.println("Please create a task first (go to Tasks menu → Add Task)");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Name: ");
         String name = scanner.nextLine();
 
@@ -186,6 +200,13 @@ public class MyApplication {
     }
 
     private void updateClientUI() {
+        // Check if clients exist
+        if (clientCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No clients to update!");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Client ID to update: ");
         int id = Integer.parseInt(scanner.nextLine());
 
@@ -209,6 +230,13 @@ public class MyApplication {
     }
 
     private void deleteClientUI() {
+        // Check if clients exist
+        if (clientCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No clients to delete!");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Client ID to delete: ");
         int id = Integer.parseInt(scanner.nextLine());
 
@@ -218,6 +246,13 @@ public class MyApplication {
 
     // JOIN operation - detailed client information
     private void viewClientDetailsUI() {
+        // Check if clients exist
+        if (clientCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No clients available!");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Client ID: ");
         int id = Integer.parseInt(scanner.nextLine());
 
@@ -227,12 +262,26 @@ public class MyApplication {
     }
 
     private void filterByStageUI() {
+        if (clientCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No clients to filter!");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.println("Filter by stage: 1=Lid, 2=Negotiation, 3=Decision, 4=Deal");
         System.out.print("Stage: ");
         int stage = Integer.parseInt(scanner.nextLine());
 
         System.out.println("\n--- FILTERED CLIENTS ---");
-        clientCtrl.showByStage(stage);  // Lambda inside
+        var filtered = clientCtrl.getAll().stream()
+                .filter(c -> c.getDealStage() == stage)
+                .toList();
+
+        if (filtered.isEmpty()) {
+            System.out.println("📭 No clients in this stage!");
+        } else {
+            filtered.forEach(System.out::println);
+        }
     }
 
     // Orders menu - shows clients by stages
@@ -256,32 +305,49 @@ public class MyApplication {
             switch (choice) {
                 case 1 -> {
                     System.out.println("\n=== ALL ORDERS ===");
-                    clientCtrl.getAll().forEach(System.out::println);
+                    var clients = clientCtrl.getAll();
+                    if (clients.isEmpty()) {
+                        System.out.println("📭 No orders yet!");
+                    } else {
+                        clients.forEach(System.out::println);
+                    }
                     pressEnterToContinue();
                 }
                 case 2 -> {
                     System.out.println("\n=== LEADS (Stage 1) ===");
-                    clientCtrl.showByStage(1);
+                    showStageOrEmpty(1);
                     pressEnterToContinue();
                 }
                 case 3 -> {
                     System.out.println("\n=== IN NEGOTIATION (Stage 2) ===");
-                    clientCtrl.showByStage(2);
+                    showStageOrEmpty(2);
                     pressEnterToContinue();
                 }
                 case 4 -> {
                     System.out.println("\n=== DECISION PHASE (Stage 3) ===");
-                    clientCtrl.showByStage(3);
+                    showStageOrEmpty(3);
                     pressEnterToContinue();
                 }
                 case 5 -> {
                     System.out.println("\n=== CLOSED DEALS (Stage 4) ===");
-                    clientCtrl.showByStage(4);
+                    showStageOrEmpty(4);
                     pressEnterToContinue();
                 }
                 case 0 -> { return; }
                 default -> System.out.println("Invalid choice!");
             }
+        }
+    }
+
+    private void showStageOrEmpty(int stage) {
+        var filtered = clientCtrl.getAll().stream()
+                .filter(c -> c.getDealStage() == stage)
+                .toList();
+
+        if (filtered.isEmpty()) {
+            System.out.println("📭 No clients in this stage!");
+        } else {
+            filtered.forEach(System.out::println);
         }
     }
 
@@ -303,7 +369,12 @@ public class MyApplication {
             switch (choice) {
                 case 1 -> {
                     System.out.println("\n--- ALL TASKS ---");
-                    taskCtrl.getAll().forEach(System.out::println);
+                    var tasks = taskCtrl.getAll();
+                    if (tasks.isEmpty()) {
+                        System.out.println("📭 No tasks yet. Add your first task!");
+                    } else {
+                        tasks.forEach(System.out::println);
+                    }
                     pressEnterToContinue();
                 }
                 case 2 -> addTaskUI();
@@ -317,6 +388,15 @@ public class MyApplication {
 
     private void addTaskUI() {
         System.out.println("\n--- ADD TASK ---");
+
+        // Check if categories exist
+        if (categoryRepo.getAll().isEmpty()) {
+            System.out.println("\n📭 No categories found!");
+            System.out.println("Please add categories to the database first.");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Task Name: ");
         String name = scanner.nextLine();
 
@@ -330,6 +410,13 @@ public class MyApplication {
     }
 
     private void updateTaskUI() {
+        // Check if tasks exist
+        if (taskCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No tasks to update!");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Task ID to update: ");
         int id = Integer.parseInt(scanner.nextLine());
 
@@ -346,6 +433,13 @@ public class MyApplication {
     }
 
     private void deleteTaskUI() {
+        // Check if tasks exist
+        if (taskCtrl.getAll().isEmpty()) {
+            System.out.println("\n📭 No tasks to delete!");
+            pressEnterToContinue();
+            return;
+        }
+
         System.out.print("Task ID to delete: ");
         int id = Integer.parseInt(scanner.nextLine());
 
@@ -358,7 +452,12 @@ public class MyApplication {
         System.out.println("\n--- SETTINGS ---");
         System.out.println("Current User: " + currentUser);
         System.out.println("\nCategories:");
-        categoryRepo.getAll().forEach(System.out::println);  // Lambda
+        var categories = categoryRepo.getAll();
+        if (categories.isEmpty()) {
+            System.out.println("📭 No categories found!");
+        } else {
+            categories.forEach(System.out::println);
+        }
         pressEnterToContinue();
     }
 
