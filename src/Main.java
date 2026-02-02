@@ -1,10 +1,8 @@
-import logic.ClientRepository;
-import logic.IClientRepository;
+import ui.MyApplication;
 
 public class Main {
     public static void main(String[] args) {
-        IClientRepository repo = new ClientRepository();
-        MyApplication app = new MyApplication(repo);
+        MyApplication app = new MyApplication();
         app.start();
     }
 }
