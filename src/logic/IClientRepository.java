@@ -3,11 +3,13 @@ package logic;
 import models.Client;
 import java.util.List;
 
+// Interface for working with clients (Dependency Inversion Principle)
 public interface IClientRepository {
-    // Добавь эти методы:
-    List<Client> getAllClients();
-    boolean addClient(Client client);
+    boolean save(Client c);
+    List<Client> getAll();
+    boolean update(int id, String name, String email, int stage, double price, int taskId);
+    boolean delete(int id);
 
-    // Если у вас будут еще методы (удаление, поиск), они тоже пишутся тут
-    boolean deleteClient(int id);
+    // JOIN operation - get full client information
+    String getFullClientDetails(int clientId);
 }
