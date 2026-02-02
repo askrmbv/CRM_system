@@ -10,7 +10,7 @@ public class DBManager {
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                String url = "jdbc:postgresql://localhost:5432/postgres";
+                String url = "jdbc:postgresql://localhost:5432/crm_db";
                 String user = "postgres";
                 String pass = "0000";
 
