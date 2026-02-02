@@ -7,6 +7,9 @@ import java.sql.SQLException;
 public class DBManager {
     private static Connection connection;
 
+    public static DBManager getInstance() {
+        return null;
+    }
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
