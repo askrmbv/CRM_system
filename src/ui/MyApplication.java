@@ -25,9 +25,9 @@ public class MyApplication {
         this.categoryRepo = new CategoryRepository();
 
         // Initialize users with Enum Role
-        users.put("asanali", new User(1, "asanali", "admin123", Role.ADMIN));
-        users.put("ayim", new User(2, "ayim", "manager123", Role.MANAGER));
-        users.put("damir", new User(3, "damir", "editor123", Role.EDITOR));
+        users.put("asanali", new User(1, "Asanali", "admin123", Role.ADMIN));
+        users.put("ayim", new User(2, "Aiym", "manager123", Role.MANAGER));
+        users.put("damir", new User(3, "Damir", "editor123", Role.EDITOR));
     }
 
     public void start() {
@@ -59,20 +59,20 @@ public class MyApplication {
         User user = users.get(username);
         if (user.getPassword().equals(password)) {
             this.currentUser = user;
-            System.out.println("✓ Login successful! Welcome, " + currentUser.getUsername() +
+            System.out.println("[!] Login confirmed. Welcome, " + currentUser.getUsername() +
                     " (Role: " + currentUser.getRole() + ")");
             return true;
         }
 
-        System.out.println("Wrong password!");
+        System.out.println("[!] Wrong password");
         return false;
     }
 
     // Main menu
     private void mainMenu() {
         while (true) {
-            System.out.println("\n╔════════════════════════════════════════════╗");
-            System.out.println("║              MAIN MENU                    ║");
+            System.out.println("╔════════════════════════════════════════════╗");
+            System.out.println("║                MAIN MENU                   ║");
             System.out.println("╚════════════════════════════════════════════╝");
             System.out.println();
             System.out.println("1. Dashboard");
@@ -99,17 +99,17 @@ public class MyApplication {
                 case 4 -> tasksMenu();
                 case 5 -> settingsMenu();
                 case 0 -> {
-                    System.out.println("Goodbye, " + currentUser.getUsername() + "!");
+                    System.out.println("Goodbye, " + currentUser.getUsername() + ".");
                     return;
                 }
-                default -> System.out.println("Invalid choice!");
+                default -> System.out.println("[!] Invalid choice");
             }
         }
     }
 
     // Dashboard
     private void dashboardMenu() {
-        System.out.println("\n=== DASHBOARD ===");
+        System.out.println("═════════ DASHBOARD ═════════");
         System.out.println("Logged in as: " + currentUser.getUsername() + " [" + currentUser.getRole() + "]");
         System.out.println("\nQuick Stats:");
 
@@ -126,7 +126,7 @@ public class MyApplication {
     // Clients menu
     private void clientsMenu() {
         while (true) {
-            System.out.println("\n--- CLIENTS MENU ---");
+            System.out.println("═════════ CLIENTS MENU ═════════");
             System.out.println("1. List All Clients");
             System.out.println("2. Add Client");
             System.out.println("3. Update Client");
@@ -143,10 +143,10 @@ public class MyApplication {
             try {
                 switch (choice) {
                     case 1 -> {
-                        System.out.println("\n--- ALL CLIENTS ---");
+                        System.out.println("═════════ ALL CLIENTS ═════════");
                         var clients = clientCtrl.getAll();
                         if (clients.isEmpty()) {
-                            System.out.println("📭 No clients yet. Add your first client!");
+                            System.out.println("[!] No clients yet. Add your first client!");
                         } else {
                             clients.forEach(System.out::println);
                         }
@@ -167,12 +167,12 @@ public class MyApplication {
     }
 
     private void addClientUI() {
-        System.out.println("\n--- ADD CLIENT ---");
+        System.out.println("\n═════════ ADD CLIENT ═════════");
 
         // Check if tasks exist first
         if (taskCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No tasks found!");
-            System.out.println("Please create a task first (go to Tasks menu → Add Task)");
+            System.out.println("[!] No tasks found");
+            System.out.println("Please create a Task first (Go to Tasks Menu > Add Task)");
             pressEnterToContinue();
             return;
         }
@@ -183,7 +183,7 @@ public class MyApplication {
         System.out.print("Email: ");
         String email = scanner.nextLine();
 
-        System.out.println("Stage: 1=Lid, 2=Negotiation, 3=Decision, 4=Deal");
+        System.out.println("Stage: 1 = Lid, 2 = Negotiation, 3 = Decision, 4 = Deal");
         System.out.print("Stage: ");
         int stage = Integer.parseInt(scanner.nextLine());
 
@@ -202,7 +202,7 @@ public class MyApplication {
     private void updateClientUI() {
         // Check if clients exist
         if (clientCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No clients to update!");
+            System.out.println("[!] No clients to update");
             pressEnterToContinue();
             return;
         }
@@ -232,7 +232,7 @@ public class MyApplication {
     private void deleteClientUI() {
         // Check if clients exist
         if (clientCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No clients to delete!");
+            System.out.println("[!] No clients to delete");
             pressEnterToContinue();
             return;
         }
@@ -248,7 +248,7 @@ public class MyApplication {
     private void viewClientDetailsUI() {
         // Check if clients exist
         if (clientCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No clients available!");
+            System.out.println("[!] No clients available!");
             pressEnterToContinue();
             return;
         }
@@ -263,22 +263,22 @@ public class MyApplication {
 
     private void filterByStageUI() {
         if (clientCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No clients to filter!");
+            System.out.println("[!] No clients to filter");
             pressEnterToContinue();
             return;
         }
 
-        System.out.println("Filter by stage: 1=Lid, 2=Negotiation, 3=Decision, 4=Deal");
+        System.out.println("Filter by stage: 1 = Lid, 2 = Negotiation, 3 = Decision, 4 = Deal");
         System.out.print("Stage: ");
         int stage = Integer.parseInt(scanner.nextLine());
 
-        System.out.println("\n--- FILTERED CLIENTS ---");
+        System.out.println("═════════ FILTERED CLIENTS ═════════");
         var filtered = clientCtrl.getAll().stream()
                 .filter(c -> c.getDealStage() == stage)
                 .toList();
 
         if (filtered.isEmpty()) {
-            System.out.println("📭 No clients in this stage!");
+            System.out.println("[!] No clients in this stage");
         } else {
             filtered.forEach(System.out::println);
         }
@@ -287,7 +287,7 @@ public class MyApplication {
     // Orders menu - shows clients by stages
     private void ordersMenu() {
         while (true) {
-            System.out.println("\n--- ORDERS MENU ---");
+            System.out.println("═════════ ORDERS MENU ═════════");
             System.out.println("View clients organized by deal stages");
             System.out.println();
             System.out.println("1. View All Orders (All Clients)");
@@ -304,37 +304,37 @@ public class MyApplication {
 
             switch (choice) {
                 case 1 -> {
-                    System.out.println("\n=== ALL ORDERS ===");
+                    System.out.println("═════════ ALL ORDERS ═════════");
                     var clients = clientCtrl.getAll();
                     if (clients.isEmpty()) {
-                        System.out.println("📭 No orders yet!");
+                        System.out.println("[!] No orders yet");
                     } else {
                         clients.forEach(System.out::println);
                     }
                     pressEnterToContinue();
                 }
                 case 2 -> {
-                    System.out.println("\n=== LEADS (Stage 1) ===");
+                    System.out.println("\n═════════ LEADS (Stage 1) ═════════");
                     showStageOrEmpty(1);
                     pressEnterToContinue();
                 }
                 case 3 -> {
-                    System.out.println("\n=== IN NEGOTIATION (Stage 2) ===");
+                    System.out.println("\n═════════ IN NEGOTIATION (Stage 2) ═════════");
                     showStageOrEmpty(2);
                     pressEnterToContinue();
                 }
                 case 4 -> {
-                    System.out.println("\n=== DECISION PHASE (Stage 3) ===");
+                    System.out.println("\n═════════ DECISION PHASE (Stage 3) ═════════");
                     showStageOrEmpty(3);
                     pressEnterToContinue();
                 }
                 case 5 -> {
-                    System.out.println("\n=== CLOSED DEALS (Stage 4) ===");
+                    System.out.println("\n═════════ CLOSED DEALS (Stage 4) ═════════");
                     showStageOrEmpty(4);
                     pressEnterToContinue();
                 }
                 case 0 -> { return; }
-                default -> System.out.println("Invalid choice!");
+                default -> System.out.println("[!] Invalid choice");
             }
         }
     }
@@ -345,7 +345,7 @@ public class MyApplication {
                 .toList();
 
         if (filtered.isEmpty()) {
-            System.out.println("📭 No clients in this stage!");
+            System.out.println("[!] No clients in this stage!");
         } else {
             filtered.forEach(System.out::println);
         }
@@ -354,7 +354,7 @@ public class MyApplication {
     // Tasks menu - fully functional
     private void tasksMenu() {
         while (true) {
-            System.out.println("\n--- TASKS MENU ---");
+            System.out.println("\n═════════ TASKS MENU ═════════");
             System.out.println("1. List All Tasks");
             System.out.println("2. Add Task");
             System.out.println("3. Update Task");
@@ -368,10 +368,10 @@ public class MyApplication {
 
             switch (choice) {
                 case 1 -> {
-                    System.out.println("\n--- ALL TASKS ---");
+                    System.out.println("\n═════════ ALL TASKS ═════════");
                     var tasks = taskCtrl.getAll();
                     if (tasks.isEmpty()) {
-                        System.out.println("📭 No tasks yet. Add your first task!");
+                        System.out.println("[!] No tasks yet. Add your first task");
                     } else {
                         tasks.forEach(System.out::println);
                     }
@@ -381,17 +381,17 @@ public class MyApplication {
                 case 3 -> updateTaskUI();
                 case 4 -> deleteTaskUI();
                 case 0 -> { return; }
-                default -> System.out.println("Invalid choice!");
+                default -> System.out.println("[!] Invalid choice!");
             }
         }
     }
 
     private void addTaskUI() {
-        System.out.println("\n--- ADD TASK ---");
+        System.out.println("\n═════════ ADD TASK ═════════");
 
         // Check if categories exist
         if (categoryRepo.getAll().isEmpty()) {
-            System.out.println("\n📭 No categories found!");
+            System.out.println("[!] No categories found!");
             System.out.println("Please add categories to the database first.");
             pressEnterToContinue();
             return;
@@ -412,7 +412,7 @@ public class MyApplication {
     private void updateTaskUI() {
         // Check if tasks exist
         if (taskCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No tasks to update!");
+            System.out.println("[!] No tasks to update!");
             pressEnterToContinue();
             return;
         }
@@ -435,7 +435,7 @@ public class MyApplication {
     private void deleteTaskUI() {
         // Check if tasks exist
         if (taskCtrl.getAll().isEmpty()) {
-            System.out.println("\n📭 No tasks to delete!");
+            System.out.println("[!] No tasks to delete");
             pressEnterToContinue();
             return;
         }
@@ -444,17 +444,17 @@ public class MyApplication {
         int id = Integer.parseInt(scanner.nextLine());
 
         boolean success = taskCtrl.deleteTask(id);
-        System.out.println(success ? "✓ Task deleted!" : "✗ Error deleting (maybe in use by clients)");
+        System.out.println(success ? "[!] Task deleted" : "✗ Error deleting (maybe in use by clients)");
     }
 
     // Settings
     private void settingsMenu() {
-        System.out.println("\n--- SETTINGS ---");
+        System.out.println("═════════ SETTINGS ═════════");
         System.out.println("Current User: " + currentUser);
         System.out.println("\nCategories:");
         var categories = categoryRepo.getAll();
         if (categories.isEmpty()) {
-            System.out.println("📭 No categories found!");
+            System.out.println("[!] No categories found");
         } else {
             categories.forEach(System.out::println);
         }
@@ -462,7 +462,7 @@ public class MyApplication {
     }
 
     private void pressEnterToContinue() {
-        System.out.print("\nPress Enter to continue...");
+        System.out.print("[!] Press Enter to continue");
         scanner.nextLine();
     }
 }
