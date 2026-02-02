@@ -114,10 +114,10 @@ public class MyApplication {
         System.out.println("\nQuick Stats:");
 
         // Lambda expression - count clients
-        long clientCount = clientCtrl.getAll().stream().count();
+        long clientCount = clientCtrl.getAll().size();
         System.out.println("Total Clients: " + clientCount);
 
-        long taskCount = taskCtrl.getAll().stream().count();
+        long taskCount = taskCtrl.getAll().size();
         System.out.println("Total Tasks: " + taskCount);
 
         pressEnterToContinue();
