@@ -11,12 +11,12 @@ public class MyApplication {
     private User currentUser;
     private final Scanner scanner = new Scanner(System.in);
 
-    // Controllers (Dependency Inversion - using interfaces)
+    // Controllers
     private final ClientController clientCtrl;
     private final TaskController taskCtrl;
     private final CategoryRepository categoryRepo;
 
-    // User storage (in a real project would be in DB)
+    // User storage
     private final Map<String, User> users = new HashMap<>();
 
     public MyApplication() {
@@ -77,9 +77,8 @@ public class MyApplication {
             System.out.println();
             System.out.println("1. Dashboard");
             System.out.println("2. Clients");
-            System.out.println("3. Orders");
-            System.out.println("4. Tasks");
-            System.out.println("5. Settings");
+            System.out.println("3. Tasks");
+            System.out.println("4. Settings");
             System.out.println("0. Logout");
             System.out.println();
             System.out.print("Choice: ");
@@ -95,9 +94,8 @@ public class MyApplication {
             switch (choice) {
                 case 1 -> dashboardMenu();
                 case 2 -> clientsMenu();
-                case 3 -> ordersMenu();
-                case 4 -> tasksMenu();
-                case 5 -> settingsMenu();
+                case 3 -> tasksMenu();
+                case 4 -> settingsMenu();
                 case 0 -> {
                     System.out.println("Goodbye, " + currentUser.getUsername() + ".");
                     return;
@@ -284,72 +282,6 @@ public class MyApplication {
         }
     }
 
-    // Orders menu - shows clients by stages
-    private void ordersMenu() {
-        while (true) {
-            System.out.println("═════════ ORDERS MENU ═════════");
-            System.out.println("View clients organized by deal stages");
-            System.out.println();
-            System.out.println("1. View All Orders (All Clients)");
-            System.out.println("2. Leads (Stage 1)");
-            System.out.println("3. In Negotiation (Stage 2)");
-            System.out.println("4. Decision Phase (Stage 3)");
-            System.out.println("5. Closed Deals (Stage 4)");
-            System.out.println("0. Back");
-            System.out.print("Choice: ");
-
-            String input = scanner.nextLine();
-            if (!input.matches("\\d+")) continue;
-            int choice = Integer.parseInt(input);
-
-            switch (choice) {
-                case 1 -> {
-                    System.out.println("═════════ ALL ORDERS ═════════");
-                    var clients = clientCtrl.getAll();
-                    if (clients.isEmpty()) {
-                        System.out.println("[!] No orders yet");
-                    } else {
-                        clients.forEach(System.out::println);
-                    }
-                    pressEnterToContinue();
-                }
-                case 2 -> {
-                    System.out.println("\n═════════ LEADS (Stage 1) ═════════");
-                    showStageOrEmpty(1);
-                    pressEnterToContinue();
-                }
-                case 3 -> {
-                    System.out.println("\n═════════ IN NEGOTIATION (Stage 2) ═════════");
-                    showStageOrEmpty(2);
-                    pressEnterToContinue();
-                }
-                case 4 -> {
-                    System.out.println("\n═════════ DECISION PHASE (Stage 3) ═════════");
-                    showStageOrEmpty(3);
-                    pressEnterToContinue();
-                }
-                case 5 -> {
-                    System.out.println("\n═════════ CLOSED DEALS (Stage 4) ═════════");
-                    showStageOrEmpty(4);
-                    pressEnterToContinue();
-                }
-                case 0 -> { return; }
-                default -> System.out.println("[!] Invalid choice");
-            }
-        }
-    }
-
-    private void showStageOrEmpty(int stage) {
-        var filtered = clientCtrl.getAll().stream()
-                .filter(c -> c.getDealStage() == stage)
-                .toList();
-
-        if (filtered.isEmpty()) {
-            System.out.println("[!] No clients in this stage!");
-        } else {
-            filtered.forEach(System.out::println);
-        }
-    }
 
     // Tasks menu - fully functional
     private void tasksMenu() {
