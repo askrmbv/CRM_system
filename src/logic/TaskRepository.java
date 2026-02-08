@@ -15,7 +15,7 @@ public class TaskRepository implements ITaskRepository {
         try (Connection conn = db.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, task.getName());
-            // Если category_id = 0 или меньше, вставляем NULL
+            // If category_id = 0 or lower, NULL
             if (task.getCategoryId() > 0) {
                 st.setInt(2, task.getCategoryId());
             } else {
@@ -56,7 +56,7 @@ public class TaskRepository implements ITaskRepository {
         try (Connection conn = db.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
-            // Если categoryId = 0 или меньше, вставляем NULL
+            // If categoryId = 0 or lower,  NULL
             if (categoryId > 0) {
                 st.setInt(2, categoryId);
             } else {
