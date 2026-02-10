@@ -1,7 +1,5 @@
 package controllers;
 
-import repository.interfaces.ICategoryRepository;
-
 public class CategoryController {
     private final ICategoryRepository categoryRepository;
 

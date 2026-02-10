@@ -1,9 +1,7 @@
 package repository;
 
-import data.DBManager;
 import data.interfaces.IDB;
 import models.Category;
-import repository.interfaces.ICategoryRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
