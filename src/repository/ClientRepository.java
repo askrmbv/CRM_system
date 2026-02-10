@@ -1,7 +1,6 @@
 package repository;
 
 import data.DBManager;
-import repository.interfaces.IClientRepository;
 import models.Client;
 import java.sql.*;
 import java.util.ArrayList;

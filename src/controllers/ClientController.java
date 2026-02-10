@@ -1,7 +1,6 @@
 package controllers;
 
 import controllers.interfaces.IClientController;
-import repository.interfaces.IClientRepository;
 import repository.interfaces.IActivityLogRepository;
 import repository.interfaces.IUserRepository;
 import models.Client;

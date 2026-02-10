@@ -3,7 +3,6 @@ package controllers;
 import controllers.interfaces.ITaskController;
 import repository.interfaces.ITaskRepository;
 import repository.interfaces.IActivityLogRepository;
-import repository.interfaces.IClientRepository;
 import repository.interfaces.IUserRepository;
 import models.Task;
 import models.Client;
