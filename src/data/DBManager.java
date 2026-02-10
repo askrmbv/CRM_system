@@ -1,19 +1,18 @@
 package data;
 
 import data.interfaces.IDB;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DBManager implements IDB {
-    private static DBManager instance;  // DBManager!
+    private static DBManager instance;
     private Connection connection;
 
     private DBManager() { }
 
     public static DBManager getInstance() {
         if (instance == null) {
-            instance = new DBManager();  //
+            instance = new DBManager();
         }
         return instance;
     }
@@ -27,7 +26,7 @@ public class DBManager implements IDB {
 
                 Class.forName("org.postgresql.Driver");
                 connection = DriverManager.getConnection(url, user, pass);
-                System.out.println("✓ Connected!");
+                // Убрал вывод "✓ Connected!"
             }
         } catch (Exception e) {
             System.out.println("DB Error: " + e.getMessage());
