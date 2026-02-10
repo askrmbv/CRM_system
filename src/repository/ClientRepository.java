@@ -1,30 +1,32 @@
 package repository;
 
 import data.DBManager;
-
+import repository.interfaces.IClientRepository;
+import models.Client;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Repository for working with clients (Single Responsibility Principle)
 public class ClientRepository implements IClientRepository {
-    private final DBManager db = DBManager.getInstance();  // Using Singleton
+    private final DBManager db = DBManager.getInstance();
 
     @Override
     public boolean save(Client c) {
-        String sql = "INSERT INTO customers(full_name, email, deal_info, price, task_id) VALUES(?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO customers(full_name, email, deal_info, price, note) VALUES(?, ?, ?, ?, ?)";
         try (Connection conn = db.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, c.getName());
             st.setString(2, c.getEmail());
             st.setInt(3, c.getDealStage());
             st.setDouble(4, c.getPrice());
-            // Handle task_id: if 0 or negative, insert NULL
-            if (c.getTaskId() > 0) {
-                st.setInt(5, c.getTaskId());
+
+            // Handle note: if empty or null, insert NULL
+            if (c.getNote() != null && !c.getNote().trim().isEmpty()) {
+                st.setString(5, c.getNote());
             } else {
-                st.setNull(5, Types.INTEGER);
+                st.setNull(5, Types.VARCHAR);
             }
+
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Save error: " + e.getMessage());
@@ -34,8 +36,7 @@ public class ClientRepository implements IClientRepository {
 
     @Override
     public List<Client> getAll() {
-        String sql = "SELECT c.id, c.full_name, c.email, c.deal_info, c.price, c.task_id, t.name AS task_name " +
-                "FROM customers c LEFT JOIN tasks t ON c.task_id = t.id ORDER BY c.id ASC";
+        String sql = "SELECT id, full_name, email, deal_info, price, note FROM customers ORDER BY id ASC";
         List<Client> list = new ArrayList<>();
 
         try (Connection conn = db.getConnection();
@@ -49,9 +50,8 @@ public class ClientRepository implements IClientRepository {
                         rs.getString("email"),
                         rs.getInt("deal_info"),
                         rs.getDouble("price"),
-                        rs.getInt("task_id")
+                        rs.getString("note")
                 );
-                client.setTaskName(rs.getString("task_name"));
                 list.add(client);
             }
         } catch (SQLException e) {
@@ -60,21 +60,74 @@ public class ClientRepository implements IClientRepository {
         return list;
     }
 
+    // Lambda expression example 1: Filter clients by minimum price
+    public List<Client> getClientsByMinPrice(double minPrice) {
+        return getAll().stream()
+                .filter(client -> client.getPrice() >= minPrice)  // Lambda expression
+                .toList();
+    }
+
+    // Lambda expression example 2: Get clients by deal stage
+    public List<Client> getClientsByStage(int stage) {
+        return getAll().stream()
+                .filter(client -> client.getDealStage() == stage)  // Lambda expression
+                .toList();
+    }
+
+    // Lambda expression example 3: Sort clients by price descending
+    public List<Client> getClientsSortedByPrice() {
+        return getAll().stream()
+                .sorted((c1, c2) -> Double.compare(c2.getPrice(), c1.getPrice()))  // Lambda expression
+                .toList();
+    }
+
+    // Lambda expression example 4: Get total revenue
+    public double getTotalRevenue() {
+        return getAll().stream()
+                .mapToDouble(Client::getPrice)  // Method reference (also a lambda!)
+                .sum();
+    }
+
     @Override
-    public boolean update(int id, String name, String email, int stage, double price, int taskId) {
-        String sql = "UPDATE customers SET full_name=?, email=?, deal_info=?, price=?, task_id=? WHERE id=?";
+    public Client getById(int id) {
+        String sql = "SELECT id, full_name, email, deal_info, price, note FROM customers WHERE id = ?";
+        try (Connection conn = db.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return new Client(
+                        rs.getInt("id"),
+                        rs.getString("full_name"),
+                        rs.getString("email"),
+                        rs.getInt("deal_info"),
+                        rs.getDouble("price"),
+                        rs.getString("note")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean update(int id, String name, String email, int stage, double price, String note) {
+        String sql = "UPDATE customers SET full_name=?, email=?, deal_info=?, price=?, note=? WHERE id=?";
         try (Connection conn = db.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
             st.setString(2, email);
             st.setInt(3, stage);
             st.setDouble(4, price);
-            // Handle task_id: if 0 or negative, set NULL
-            if (taskId > 0) {
-                st.setInt(5, taskId);
+
+            // Handle note: if empty or null, set NULL
+            if (note != null && !note.trim().isEmpty()) {
+                st.setString(5, note);
             } else {
-                st.setNull(5, Types.INTEGER);
+                st.setNull(5, Types.VARCHAR);
             }
+
             st.setInt(6, id);
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -98,13 +151,14 @@ public class ClientRepository implements IClientRepository {
     public String getFullClientDetails(int clientId) {
         String sql = """
             SELECT 
-                c.id, c.full_name, c.email, c.deal_info, c.price,
+                c.id, c.full_name, c.email, c.deal_info, c.price, c.note,
                 t.id as task_id, t.name as task_name,
                 cat.name as category_name
             FROM customers c
-            LEFT JOIN tasks t ON c.task_id = t.id
+            LEFT JOIN tasks t ON c.id = t.customer_id
             LEFT JOIN categories cat ON t.category_id = cat.id
             WHERE c.id = ?
+            ORDER BY t.id
         """;
 
         StringBuilder details = new StringBuilder();
@@ -114,40 +168,57 @@ public class ClientRepository implements IClientRepository {
             st.setInt(1, clientId);
             ResultSet rs = st.executeQuery();
 
-            if (rs.next()) {
-                details.append("═══════════════════════════════════════════════════\n");
-                details.append("                CLIENT DETAILS\n");
-                details.append("═══════════════════════════════════════════════════\n\n");
+            boolean hasData = false;
+            while (rs.next()) {
+                if (!hasData) {
+                    // Print client info once
+                    details.append("═══════════════════════════════════════════════════\n");
+                    details.append("                CLIENT DETAILS\n");
+                    details.append("═══════════════════════════════════════════════════\n\n");
 
-                details.append(String.format("ID:           %d\n", rs.getInt("id")));
-                details.append(String.format("Name:         %s\n", rs.getString("full_name")));
-                details.append(String.format("Email:        %s\n", rs.getString("email")));
+                    details.append(String.format("ID:           %d\n", rs.getInt("id")));
+                    details.append(String.format("Name:         %s\n", rs.getString("full_name")));
+                    details.append(String.format("Email:        %s\n", rs.getString("email")));
 
-                int stage = rs.getInt("deal_info");
-                String stageText = switch(stage) {
-                    case 2 -> "Negotiation";
-                    case 3 -> "Decision";
-                    case 4 -> "Deal";
-                    default -> "Lid";
-                };
-                details.append(String.format("Deal Stage:   %s (%d)\n", stageText, stage));
-                details.append(String.format("Price:        $%.2f\n\n", rs.getDouble("price")));
+                    int stage = rs.getInt("deal_info");
+                    String stageText = switch(stage) {
+                        case 2 -> "Negotiation";
+                        case 3 -> "Decision";
+                        case 4 -> "Deal";
+                        default -> "Lid";
+                    };
+                    details.append(String.format("Deal Stage:   %s (%d)\n", stageText, stage));
+                    details.append(String.format("Price:        $%.2f\n", rs.getDouble("price")));
 
-                details.append("Task Information:\n");
-                details.append("─────────────────────────────────────────────────\n");
-                if (rs.getObject("task_id") != null) {
-                    details.append(String.format("Task ID:      %d\n", rs.getInt("task_id")));
-                    details.append(String.format("Task Name:    %s\n", rs.getString("task_name")));
-                    if (rs.getString("category_name") != null) {
-                        details.append(String.format("Category:     %s\n", rs.getString("category_name")));
+                    String note = rs.getString("note");
+                    if (note != null && !note.isEmpty()) {
+                        details.append(String.format("Note:         %s\n", note));
                     }
-                } else {
-                    details.append("No task assigned\n");
+
+                    details.append("\nTasks:\n");
+                    details.append("─────────────────────────────────────────────────\n");
+                    hasData = true;
                 }
 
-                details.append("═══════════════════════════════════════════════════\n");
-            } else {
+                // Print task info
+                if (rs.getObject("task_id") != null) {
+                    details.append(String.format("  • Task #%d: %s",
+                            rs.getInt("task_id"),
+                            rs.getString("task_name")));
+                    if (rs.getString("category_name") != null) {
+                        details.append(String.format(" [%s]", rs.getString("category_name")));
+                    }
+                    details.append("\n");
+                }
+            }
+
+            if (!hasData) {
                 details.append("Client not found!");
+            } else {
+                if (!details.toString().contains("Task #")) {
+                    details.append("  No tasks assigned\n");
+                }
+                details.append("═══════════════════════════════════════════════════\n");
             }
 
         } catch (SQLException e) {
