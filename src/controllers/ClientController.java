@@ -1,75 +1,111 @@
-package logic;
+package controllers;
 
+import controllers.interfaces.IClientController;
+import repository.interfaces.IClientRepository;
+import repository.interfaces.IActivityLogRepository;
+import repository.interfaces.IUserRepository;
 import models.Client;
 import models.Role;
 import exceptions.AccessDeniedException;
 import exceptions.InvalidDataException;
 import java.util.List;
 
-// Controller for managing clients (Dependency Inversion - depends on interface)
-public class ClientController {
-    private final IClientRepository repo;
+public class ClientController implements IClientController {
+    private final IClientRepository clientRepo;
+    private final IActivityLogRepository activityLog;
+    private final IUserRepository userRepo;
 
-    public ClientController(IClientRepository repo) {
-        this.repo = repo;
+    public ClientController(IClientRepository clientRepo, IActivityLogRepository activityLog, IUserRepository userRepo) {
+        this.clientRepo = clientRepo;
+        this.activityLog = activityLog;
+        this.userRepo = userRepo;
     }
 
-    // Add client (Manager and Admin only)
-    public String addClient(String name, String email, int stage, double price, int taskId, Role userRole) {
-        // Role Management - access check
-        if (userRole != Role.ADMIN && userRole != Role.MANAGER) {
-            throw new AccessDeniedException("Only Admin or Manager can add clients");
-        }
+    private String getUsernameById(int userId) {
+        return userRepo.getUsernameById(userId);
+    }
 
-        // Validate input data
+    @Override
+    public String addClient(String name, String email, int stage, double price, String note, int userId, Role role) {
+        // Validation
         if (name == null || name.trim().isEmpty()) {
-            throw new InvalidDataException("Name cannot be empty");
+            throw new InvalidDataException("Client name cannot be empty");
         }
         if (email == null || !email.contains("@")) {
             throw new InvalidDataException("Invalid email format");
+        }
+        if (stage < 1 || stage > 4) {
+            throw new InvalidDataException("Stage must be between 1 and 4");
         }
         if (price < 0) {
             throw new InvalidDataException("Price cannot be negative");
         }
 
-        // Create client with validated data
-        Client client = new Client(0, name, email, stage, price, taskId);
-        return repo.save(client) ? " ✓ Client added" : " ✗ Error saving";
-    }
-
-    // View all clients (all roles)
-    public List<Client> getAll() {
-        return repo.getAll();
-    }
-
-    // Lambda expression - filter clients by stage
-    public void showByStage(int stage) {
-        repo.getAll().stream()
-                .filter(c -> c.getDealStage() == stage)
-                .forEach(System.out::println);
-    }
-
-    // Update client (Manager and Admin only)
-    public String updateClient(int id, String name, String email, int stage, double price, int taskId, Role userRole) {
-        if (userRole != Role.ADMIN && userRole != Role.MANAGER) {
-            throw new AccessDeniedException("Only Admin or Manager can update clients");
+        // Role check - EDITOR can only view and edit, not add
+        if (role == Role.EDITOR) {
+            throw new AccessDeniedException("EDITOR can only view and edit existing clients, not add new ones");
         }
 
-        return repo.update(id, name, email, stage, price, taskId) ?
-                " ✓ Updated" : " ✗ Not found";
+        // Role check - all can add clients
+        Client client = new Client(0, name, email, stage, price, note);
+
+        if (clientRepo.save(client)) {
+            // Log activity with username
+            activityLog.log(userId, "ADD_CLIENT",
+                    String.format("%s добавил(а) клиента %s", getUsernameById(userId), name));
+            return "✓ Client added successfully!";
+        }
+        return "✗ Error adding client";
     }
 
-    // Delete client (Admin only!)
-    public String deleteClient(int id, Role userRole) {
-        if (userRole != Role.ADMIN) {
+    @Override
+    public List<Client> getAll() {
+        return clientRepo.getAll();
+    }
+
+    @Override
+    public String updateClient(int id, String name, String email, int stage, double price, String note, Role role) {
+        // EDITOR can only update existing clients (not add or delete)
+        // This gives EDITOR a specific use case!
+
+        // Validation
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidDataException("Client name cannot be empty");
+        }
+        if (email == null || !email.contains("@")) {
+            throw new InvalidDataException("Invalid email format");
+        }
+
+        if (clientRepo.update(id, name, email, stage, price, note)) {
+            return "✓ Client updated!";
+        }
+        return "✗ Client not found";
+    }
+
+    @Override
+    public String deleteClient(int id, int userId, Role role) {
+        // Only ADMIN can delete
+        if (role != Role.ADMIN) {
             throw new AccessDeniedException("Only Admin can delete clients");
         }
 
-        return repo.delete(id) ? " ✓ Deleted" : " ✗ Error";
+        // Get client name before deletion for log
+        Client client = clientRepo.getById(id);
+        if (client == null) {
+            return "✗ Client not found";
+        }
+
+        if (clientRepo.delete(id)) {
+            // Log activity
+            activityLog.log(userId, "DELETE_CLIENT",
+                    String.format("%s удалил(а) клиента %s [ID:%d]", getUsernameById(userId), client.getName(), id));
+            return "✓ Client deleted";
+        }
+        return "✗ Error deleting client";
     }
 
-    // JOIN operation - get full client information
+    @Override
     public String getFullDetails(int clientId) {
-        return repo.getFullClientDetails(clientId);
+        return clientRepo.getFullClientDetails(clientId);
     }
 }

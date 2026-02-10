@@ -1,4 +1,4 @@
-package models; //
+package models;
 
 public class Client {
     private int id;
@@ -6,16 +6,15 @@ public class Client {
     private String email;
     private int dealStage;  // 1-4: Lid, Negotiation, Decision, Deal
     private double price;
-    private int taskId;
-    private String taskName; // For display after JOIN
+    private String note;  // Optional note
 
-    public Client(int id, String name, String email, int dealStage, double price, int taskId) {
+    public Client(int id, String name, String email, int dealStage, double price, String note) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.dealStage = dealStage;
         this.price = price;
-        this.taskId = taskId;
+        this.note = note;
     }
 
     // Getters
@@ -24,12 +23,7 @@ public class Client {
     public String getEmail() { return email; }
     public int getDealStage() { return dealStage; }
     public double getPrice() { return price; }
-    public int getTaskId() { return taskId; }
-
-    // Setter for JOIN data
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
+    public String getNote() { return note; }
 
     @Override
     public String toString() {
@@ -40,8 +34,9 @@ public class Client {
             default -> "Lid";
         };
 
-        return String.format("ID:%-3d | %-15s | %-20s | Stage: %-12s | $%-8.2f | Task: %s",
-                id, name, email, stage, price,
-                (taskName != null ? taskName : "Task #" + taskId));
+        String noteDisplay = (note != null && !note.isEmpty()) ? " | Note: " + note : "";
+
+        return String.format("ID:%-3d | %-15s | %-20s | Stage: %-12s | $%-8.2f%s",
+                id, name, email, stage, price, noteDisplay);
     }
 }

@@ -1,4 +1,9 @@
 package repository.interfaces;
 
-public class ICategoryRepository {
+import models.Category;
+
+import java.util.List;
+
+public interface ICategoryRepository {
+    List<Category> getAll()
 }

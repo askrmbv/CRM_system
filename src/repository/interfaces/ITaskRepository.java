@@ -1,6 +1,5 @@
-package logic;
+package repository.interfaces;
 
-import models.Task;
 import java.util.List;
 
 public interface ITaskRepository {

@@ -1,15 +1,19 @@
-package logic;
+package repository.interfaces;
 
 import models.Client;
 import java.util.List;
 
-// Interface for working with clients (Dependency Inversion Principle)
 public interface IClientRepository {
     boolean save(Client c);
     List<Client> getAll();
-    boolean update(int id, String name, String email, int stage, double price, int taskId);
+    Client getById(int id);
+    boolean update(int id, String name, String email, int stage, double price, String note);
     boolean delete(int id);
-
-    // JOIN operation - get full client information
     String getFullClientDetails(int clientId);
+
+    // Lambda methods
+    List<Client> getClientsByMinPrice(double minPrice);
+    List<Client> getClientsByStage(int stage);
+    List<Client> getClientsSortedByPrice();
+    double getTotalRevenue();
 }
