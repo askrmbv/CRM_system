@@ -1,13 +1,20 @@
-package logic;
+package repository;
 
 import data.DBManager;
+import data.interfaces.IDB;
 import models.Category;
+import repository.interfaces.ICategoryRepository;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryRepository {
-    private final DBManager db = DBManager.getInstance();
+public class CategoryRepository implements ICategoryRepository {
+    private final IDB db;
+
+    public CategoryRepository(IDB db) {
+        this.db = db;
+    }
 
     public List<Category> getAll() {
         String sql = "SELECT * FROM categories ORDER BY id ASC";

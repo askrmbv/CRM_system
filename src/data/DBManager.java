@@ -1,9 +1,11 @@
 package data;
 
+import data.interfaces.IDB;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DBManager {
+public class DBManager implements IDB {
     private static DBManager instance;  // DBManager!
     private Connection connection;
 

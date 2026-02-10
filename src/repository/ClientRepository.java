@@ -1,7 +1,7 @@
-package logic;
+package repository;
 
 import data.DBManager;
-import models.Client;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

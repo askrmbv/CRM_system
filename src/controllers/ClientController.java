@@ -1,6 +1,5 @@
-package logic;
+package controllers;
 
-import models.Client;
 import models.Role;
 import exceptions.AccessDeniedException;
 import exceptions.InvalidDataException;

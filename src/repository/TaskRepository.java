@@ -1,12 +1,13 @@
-package logic;
+package repository;
 
 import data.DBManager;
-import models.Task;
+import repository.interfaces.ITaskRepository;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskRepository implements ITaskRepository {
+public class +TaskRepository implements ITaskRepository {
     private final DBManager db = DBManager.getInstance();
 
     @Override

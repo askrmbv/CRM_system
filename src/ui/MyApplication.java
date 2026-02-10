@@ -1,10 +1,10 @@
 package ui;
 
-import logic.*;
+import controllers.CategoryController;
+import controllers.ClientController;
 import models.*;
 import exceptions.*;
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.Scanner;
 
 public class MyApplication {
@@ -14,21 +14,14 @@ public class MyApplication {
     // Controllers
     private final ClientController clientCtrl;
     private final TaskController taskCtrl;
-    private final CategoryRepository categoryRepo;
+    private final CategoryController categoryCtrl;
 
-    // User storage
-    private final Map<String, User> users = new HashMap<>();
-
-    public MyApplication() {
-        this.clientCtrl = new ClientController(new ClientRepository());
-        this.taskCtrl = new TaskController(new TaskRepository());
-        this.categoryRepo = new CategoryRepository();
-
-        // Initialize users with Enum Role
-        users.put("asanali", new User(1, "Asanali", "admin123", Role.ADMIN));
-        users.put("ayim", new User(2, "Aiym", "manager123", Role.MANAGER));
-        users.put("damir", new User(3, "Damir", "editor123", Role.EDITOR));
+    public MyApplication(ClientController clientCtrl, TaskController taskCtrl, CategoryController categoryCtrl) {
+        this.clientCtrl = clientCtrl;
+        this.taskCtrl = taskCtrl;
+        this.categoryCtrl = categoryCtrl;
     }
+
 
     public void start() {
         System.out.println("╔════════════════════════════════════════════╗");
