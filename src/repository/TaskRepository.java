@@ -1,7 +1,6 @@
 package repository;
 
 import data.DBManager;
-import repository.interfaces.ITaskRepository;
 import models.Task;
 import java.sql.*;
 import java.util.ArrayList;
