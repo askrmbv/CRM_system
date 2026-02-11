@@ -114,7 +114,7 @@ public class MyApplication {
         }
     }
 
-    // Dashboard (БЕЗ recent activity)
+    // Dashboard
     private void dashboardMenu() {
         System.out.println("\n═════════ DASHBOARD ═════════");
         System.out.println("Logged in as: " + currentUser.getUsername() + " [" + currentUser.getRole() + "]");
