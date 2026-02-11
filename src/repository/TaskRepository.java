@@ -1,6 +1,7 @@
 package repository;
 
 import data.DBManager;
+import repository.interfaces.ITaskRepository;
 import models.Task;
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,13 +17,13 @@ public class TaskRepository implements ITaskRepository {
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, task.getName());
             st.setInt(2, task.getCustomerId());
-
+            
             if (task.getCategoryId() > 0) {
                 st.setInt(3, task.getCategoryId());
             } else {
                 st.setNull(3, Types.INTEGER);
             }
-
+            
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Task save error: " + e.getMessage());
@@ -41,7 +42,7 @@ public class TaskRepository implements ITaskRepository {
             LEFT JOIN categories cat ON t.category_id = cat.id
             ORDER BY t.id ASC
         """;
-
+        
         List<Task> list = new ArrayList<>();
         try (Connection conn = db.getConnection();
              Statement st = conn.createStatement();
@@ -76,11 +77,11 @@ public class TaskRepository implements ITaskRepository {
             WHERE t.customer_id = ?
             ORDER BY t.id ASC
         """;
-
+        
         List<Task> list = new ArrayList<>();
         try (Connection conn = db.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
-
+            
             st.setInt(1, clientId);
             ResultSet rs = st.executeQuery();
 
@@ -107,13 +108,13 @@ public class TaskRepository implements ITaskRepository {
         try (Connection conn = db.getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
-
+            
             if (categoryId > 0) {
                 st.setInt(2, categoryId);
             } else {
                 st.setNull(2, Types.INTEGER);
             }
-
+            
             st.setInt(3, id);
             return st.executeUpdate() > 0;
         } catch (SQLException e) {

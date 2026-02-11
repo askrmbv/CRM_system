@@ -454,11 +454,11 @@ public class MyApplication {
             System.out.println("4. Show Action Statistics");
             System.out.println("0. Back");
             System.out.print("Choice: ");
-
+            
             String input = scanner.nextLine();
             if (!input.matches("\\d+")) continue;
             int choice = Integer.parseInt(input);
-
+            
             switch (choice) {
                 case 1 -> showAllLogsUI();
                 case 2 -> filterLogsByActionTypeUI();  // NEW: uses lambda
@@ -485,20 +485,20 @@ public class MyApplication {
     private void filterLogsByActionTypeUI() {
         System.out.println("\n═════════ AVAILABLE ACTION TYPES ═════════");
         var actionTypes = activityLogRepo.getAllActionTypes();  // ← LAMBDA METHOD!
-
+        
         if (actionTypes.isEmpty()) {
             System.out.println("[!] No logs yet");
             pressEnterToContinue();
             return;
         }
-
+        
         actionTypes.forEach(type -> System.out.println("• " + type));
-
+        
         System.out.print("\nEnter action type: ");
         String actionType = scanner.nextLine().toUpperCase();
-
+        
         var logs = activityLogRepo.getLogsByActionType(actionType);  // ← LAMBDA METHOD!
-
+        
         System.out.println("\n═════════ LOGS: " + actionType + " ═════════");
         if (logs.isEmpty()) {
             System.out.println("[!] No logs found for this action type");
@@ -515,7 +515,7 @@ public class MyApplication {
         try {
             int userId = Integer.parseInt(scanner.nextLine());
             var logs = activityLogRepo.getLogsByUserId(userId);  // ← LAMBDA METHOD!
-
+            
             System.out.println("\n═════════ LOGS FOR USER #" + userId + " ═════════");
             if (logs.isEmpty()) {
                 System.out.println("[!] No logs found for this user");
@@ -533,7 +533,7 @@ public class MyApplication {
     private void showActionStatisticsUI() {
         System.out.println("\n═════════ ACTION STATISTICS ═════════");
         var actionTypes = activityLogRepo.getAllActionTypes();  // ← LAMBDA METHOD!
-
+        
         if (actionTypes.isEmpty()) {
             System.out.println("[!] No activity recorded yet");
         } else {
@@ -592,7 +592,7 @@ public class MyApplication {
         if (categoryCtrl.addCategory(name)) {  // ← USES addCategory()!
             System.out.println("✓ Category added successfully!");
             activityLogRepo.log(currentUser.getId(), "ADD_CATEGORY",
-                    String.format("%s добавил(а) категорию %s", currentUser.getUsername(), name));
+                String.format("%s добавил(а) категорию %s", currentUser.getUsername(), name));
         } else {
             System.out.println("✗ Failed to add category (already exists or invalid)");
         }
@@ -628,7 +628,7 @@ public class MyApplication {
             if (categoryCtrl.updateCategory(id, newName)) {  // ← USES updateCategory()!
                 System.out.println("✓ Category updated!");
                 activityLogRepo.log(currentUser.getId(), "UPDATE_CATEGORY",
-                        String.format("%s обновил(а) категорию #%d", currentUser.getUsername(), id));
+                    String.format("%s обновил(а) категорию #%d", currentUser.getUsername(), id));
             } else {
                 System.out.println("✗ Failed to update category");
             }
@@ -656,7 +656,7 @@ public class MyApplication {
             if (categoryCtrl.deleteCategory(id)) {  // ← USES deleteCategory()!
                 System.out.println("✓ Category deleted!");
                 activityLogRepo.log(currentUser.getId(), "DELETE_CATEGORY",
-                        String.format("%s удалил(а) категорию #%d", currentUser.getUsername(), id));
+                    String.format("%s удалил(а) категорию #%d", currentUser.getUsername(), id));
             } else {
                 System.out.println("✗ Failed to delete category");
             }
@@ -677,7 +677,7 @@ public class MyApplication {
         try {
             double minPrice = Double.parseDouble(scanner.nextLine());
             var clients = clientRepo.getClientsByMinPrice(minPrice);  // ← LAMBDA METHOD!
-
+            
             System.out.println("\n═════════ CLIENTS WITH PRICE >= $" + minPrice + " ═════════");
             if (clients.isEmpty()) {
                 System.out.println("[!] No clients found with price >= $" + minPrice);
@@ -694,7 +694,7 @@ public class MyApplication {
     // NEW: Sort clients by price descending (uses lambda in ClientRepository)
     private void sortByPriceUI() {
         var clients = clientRepo.getClientsSortedByPrice();  // ← LAMBDA METHOD!
-
+        
         System.out.println("\n═════════ CLIENTS SORTED BY PRICE (HIGH → LOW) ═════════");
         if (clients.isEmpty()) {
             System.out.println("[!] No clients yet");
@@ -707,16 +707,16 @@ public class MyApplication {
     // NEW: Show total revenue (uses lambda in ClientRepository)
     private void showTotalRevenueUI() {
         double totalRevenue = clientRepo.getTotalRevenue();  // ← LAMBDA METHOD!
-
+        
         System.out.println("\n═════════ REVENUE STATISTICS ═════════");
         System.out.printf("Total Revenue: $%.2f\n", totalRevenue);
         System.out.println("Total Clients: " + clientRepo.getAll().size());
-
+        
         if (clientRepo.getAll().size() > 0) {
             double avgRevenue = totalRevenue / clientRepo.getAll().size();
             System.out.printf("Average per Client: $%.2f\n", avgRevenue);
         }
-
+        
         pressEnterToContinue();
     }
 
@@ -729,14 +729,14 @@ public class MyApplication {
             pressEnterToContinue();
             return;
         }
-
+        
         categories.forEach(cat -> System.out.println(cat.getId() + ". " + cat.getName()));
-
+        
         System.out.print("\nEnter category ID: ");
         try {
             int categoryId = Integer.parseInt(scanner.nextLine());
             var tasks = taskRepo.getTasksByCategory(categoryId);  // ← LAMBDA METHOD!
-
+            
             System.out.println("\n═════════ TASKS IN CATEGORY #" + categoryId + " ═════════");
             if (tasks.isEmpty()) {
                 System.out.println("[!] No tasks found in this category");
@@ -759,22 +759,22 @@ public class MyApplication {
             pressEnterToContinue();
             return;
         }
-
+        
         clients.forEach(System.out::println);
-
+        
         System.out.print("\nEnter client ID: ");
         try {
             int clientId = Integer.parseInt(scanner.nextLine());
-
+            
             // Check if customer has tasks using lambda
             boolean hasTasks = taskRepo.customerHasTasks(clientId);  // ← LAMBDA METHOD!
             long taskCount = taskRepo.countTasksByCustomer(clientId);  // ← LAMBDA METHOD!
-
+            
             System.out.println("\n═════════ TASK STATISTICS ═════════");
             System.out.println("Client ID: " + clientId);
             System.out.println("Has tasks: " + (hasTasks ? "YES" : "NO"));
             System.out.println("Total tasks: " + taskCount);
-
+            
         } catch (NumberFormatException e) {
             System.out.println("✗ Invalid ID!");
         }
@@ -790,13 +790,13 @@ public class MyApplication {
             pressEnterToContinue();
             return;
         }
-
+        
         clients.forEach(System.out::println);
-
+        
         System.out.print("\nEnter client ID: ");
         try {
             int clientId = Integer.parseInt(scanner.nextLine());
-
+            
             // Check if client exists
             Client client = clientRepo.getById(clientId);
             if (client == null) {
@@ -804,7 +804,7 @@ public class MyApplication {
                 pressEnterToContinue();
                 return;
             }
-
+            
             while (true) {
                 System.out.println("\n═════════ NOTES FOR: " + client.getName() + " ═════════");
                 System.out.println("1. View All Notes");
@@ -812,11 +812,11 @@ public class MyApplication {
                 System.out.println("3. Delete Note");
                 System.out.println("0. Back");
                 System.out.print("Choice: ");
-
+                
                 String input = scanner.nextLine();
                 if (!input.matches("\\d+")) continue;
                 int choice = Integer.parseInt(input);
-
+                
                 switch (choice) {
                     case 1 -> {
                         var notes = noteRepo.getByCustomerId(clientId);  // ← USES NoteRepository!
@@ -830,7 +830,7 @@ public class MyApplication {
                     case 2 -> {
                         System.out.print("Enter note text: ");
                         String noteText = scanner.nextLine();
-
+                        
                         if (noteText.trim().isEmpty()) {
                             System.out.println("✗ Note cannot be empty!");
                         } else {
@@ -838,8 +838,8 @@ public class MyApplication {
                             if (noteRepo.save(note)) {  // ← USES NoteRepository!
                                 System.out.println("✓ Note added successfully!");
                                 activityLogRepo.log(currentUser.getId(), "ADD_NOTE",
-                                        String.format("%s добавил(а) заметку для %s",
-                                                currentUser.getUsername(), client.getName()));
+                                    String.format("%s добавил(а) заметку для %s", 
+                                        currentUser.getUsername(), client.getName()));
                             } else {
                                 System.out.println("✗ Failed to add note");
                             }
@@ -853,18 +853,18 @@ public class MyApplication {
                             pressEnterToContinue();
                             break;
                         }
-
+                        
                         System.out.println("\n═════════ NOTES ═════════");
                         notes.forEach(note -> System.out.println("ID: " + note.getId() + " - " + note));
-
+                        
                         System.out.print("\nEnter note ID to delete: ");
                         try {
                             int noteId = Integer.parseInt(scanner.nextLine());
                             if (noteRepo.delete(noteId)) {  // ← USES delete()!
                                 System.out.println("✓ Note deleted successfully!");
                                 activityLogRepo.log(currentUser.getId(), "DELETE_NOTE",
-                                        String.format("%s удалил(а) заметку #%d",
-                                                currentUser.getUsername(), noteId));
+                                    String.format("%s удалил(а) заметку #%d", 
+                                        currentUser.getUsername(), noteId));
                             } else {
                                 System.out.println("✗ Failed to delete note");
                             }
@@ -876,7 +876,7 @@ public class MyApplication {
                     case 0 -> { return; }
                 }
             }
-
+            
         } catch (NumberFormatException e) {
             System.out.println("✗ Invalid ID!");
             pressEnterToContinue();

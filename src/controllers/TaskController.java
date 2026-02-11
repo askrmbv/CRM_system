@@ -1,7 +1,9 @@
 package controllers;
 
 import controllers.interfaces.ITaskController;
+import repository.interfaces.ITaskRepository;
 import repository.interfaces.IActivityLogRepository;
+import repository.interfaces.IClientRepository;
 import repository.interfaces.IUserRepository;
 import models.Task;
 import models.Client;
@@ -33,7 +35,7 @@ public class TaskController implements ITaskController {
         if (role == Role.EDITOR) {
             throw new AccessDeniedException("EDITOR can only view existing tasks, not add new ones");
         }
-
+        
         // Validation
         if (name == null || name.trim().isEmpty()) {
             throw new InvalidDataException("Task name cannot be empty");
@@ -46,12 +48,12 @@ public class TaskController implements ITaskController {
         }
 
         Task task = new Task(0, name, clientId, categoryId);
-
+        
         if (taskRepo.save(task)) {
             // Log activity with username
-            activityLog.log(userId, "ADD_TASK",
-                    String.format("%s добавил(а) task \"%s\" для клиента %s [ID:%d]",
-                            getUsernameById(userId), name, client.getName(), clientId));
+            activityLog.log(userId, "ADD_TASK", 
+                String.format("%s добавил(а) task \"%s\" для клиента %s [ID:%d]", 
+                    getUsernameById(userId), name, client.getName(), clientId));
             return "✓ Task added successfully!";
         }
         return "✗ Error adding task";
@@ -84,8 +86,8 @@ public class TaskController implements ITaskController {
 
         if (taskRepo.delete(id)) {
             // Log activity
-            activityLog.log(userId, "DELETE_TASK",
-                    String.format("%s удалил(а) task [ID:%d]", getUsernameById(userId), id));
+            activityLog.log(userId, "DELETE_TASK", 
+                String.format("%s удалил(а) task [ID:%d]", getUsernameById(userId), id));
             return "✓ Task deleted";
         }
         return "✗ Error deleting task";

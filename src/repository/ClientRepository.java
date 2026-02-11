@@ -1,6 +1,7 @@
 package repository;
 
 import data.DBManager;
+import repository.interfaces.IClientRepository;
 import models.Client;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,14 +19,14 @@ public class ClientRepository implements IClientRepository {
             st.setString(2, c.getEmail());
             st.setInt(3, c.getDealStage());
             st.setDouble(4, c.getPrice());
-
+            
             // Handle note: if empty or null, insert NULL
             if (c.getNote() != null && !c.getNote().trim().isEmpty()) {
                 st.setString(5, c.getNote());
             } else {
                 st.setNull(5, Types.VARCHAR);
             }
-
+            
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Save error: " + e.getMessage());
@@ -119,14 +120,14 @@ public class ClientRepository implements IClientRepository {
             st.setString(2, email);
             st.setInt(3, stage);
             st.setDouble(4, price);
-
+            
             // Handle note: if empty or null, set NULL
             if (note != null && !note.trim().isEmpty()) {
                 st.setString(5, note);
             } else {
                 st.setNull(5, Types.VARCHAR);
             }
-
+            
             st.setInt(6, id);
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -188,12 +189,12 @@ public class ClientRepository implements IClientRepository {
                     };
                     details.append(String.format("Deal Stage:   %s (%d)\n", stageText, stage));
                     details.append(String.format("Price:        $%.2f\n", rs.getDouble("price")));
-
+                    
                     String note = rs.getString("note");
                     if (note != null && !note.isEmpty()) {
                         details.append(String.format("Note:         %s\n", note));
                     }
-
+                    
                     details.append("\nTasks:\n");
                     details.append("─────────────────────────────────────────────────\n");
                     hasData = true;
@@ -201,8 +202,8 @@ public class ClientRepository implements IClientRepository {
 
                 // Print task info
                 if (rs.getObject("task_id") != null) {
-                    details.append(String.format("  • Task #%d: %s",
-                            rs.getInt("task_id"),
+                    details.append(String.format("  • Task #%d: %s", 
+                            rs.getInt("task_id"), 
                             rs.getString("task_name")));
                     if (rs.getString("category_name") != null) {
                         details.append(String.format(" [%s]", rs.getString("category_name")));

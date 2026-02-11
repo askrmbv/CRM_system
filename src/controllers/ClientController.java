@@ -1,6 +1,7 @@
 package controllers;
 
 import controllers.interfaces.IClientController;
+import repository.interfaces.IClientRepository;
 import repository.interfaces.IActivityLogRepository;
 import repository.interfaces.IUserRepository;
 import models.Client;
@@ -47,11 +48,11 @@ public class ClientController implements IClientController {
 
         // Role check - all can add clients
         Client client = new Client(0, name, email, stage, price, note);
-
+        
         if (clientRepo.save(client)) {
             // Log activity with username
-            activityLog.log(userId, "ADD_CLIENT",
-                    String.format("%s добавил(а) клиента %s", getUsernameById(userId), name));
+            activityLog.log(userId, "ADD_CLIENT", 
+                String.format("%s добавил(а) клиента %s", getUsernameById(userId), name));
             return "✓ Client added successfully!";
         }
         return "✗ Error adding client";
@@ -96,8 +97,8 @@ public class ClientController implements IClientController {
 
         if (clientRepo.delete(id)) {
             // Log activity
-            activityLog.log(userId, "DELETE_CLIENT",
-                    String.format("%s удалил(а) клиента %s [ID:%d]", getUsernameById(userId), client.getName(), id));
+            activityLog.log(userId, "DELETE_CLIENT", 
+                String.format("%s удалил(а) клиента %s [ID:%d]", getUsernameById(userId), client.getName(), id));
             return "✓ Client deleted";
         }
         return "✗ Error deleting client";

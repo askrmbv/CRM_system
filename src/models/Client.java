@@ -35,7 +35,7 @@ public class Client {
         };
 
         String noteDisplay = (note != null && !note.isEmpty()) ? " | Note: " + note : "";
-
+        
         return String.format("ID:%-3d | %-15s | %-20s | Stage: %-12s | $%-8.2f%s",
                 id, name, email, stage, price, noteDisplay);
     }

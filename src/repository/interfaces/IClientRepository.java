@@ -10,7 +10,7 @@ public interface IClientRepository {
     boolean update(int id, String name, String email, int stage, double price, String note);
     boolean delete(int id);
     String getFullClientDetails(int clientId);
-
+    
     // Lambda methods
     List<Client> getClientsByMinPrice(double minPrice);
     List<Client> getClientsByStage(int stage);
