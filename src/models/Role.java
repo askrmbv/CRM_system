@@ -1,6 +1,6 @@
 package models;
 
-// User roles for access control system
+// User roles
 public enum Role {
     ADMIN,    // Full access to everything
     MANAGER,  // Can add and edit, but not delete
