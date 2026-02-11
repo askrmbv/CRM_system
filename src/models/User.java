@@ -13,6 +13,8 @@ public class User {
         this.role = role;
     }
 
+    // Getters
+    public int getId() { return id; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }
     public Role getRole() { return role; }
