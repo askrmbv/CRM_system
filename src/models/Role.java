@@ -3,6 +3,6 @@ package models;
 // User roles
 public enum Role {
     ADMIN,    // Full access to everything
-    MANAGER,  //
+    MANAGER,  // Cant delete
     EDITOR    // View and edit only
 }
